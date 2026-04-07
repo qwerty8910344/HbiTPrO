@@ -10,6 +10,7 @@ import SettingsView from './views/Settings'
 import AuthView from './views/Auth'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from './lib/supabase'
+import { SettingsProvider } from './context/SettingsContext'
 
 function App() {
   const [session, setSession] = useState(null);
@@ -55,28 +56,32 @@ function App() {
   // Enforce authentication wrapper
   if (!session) {
     return (
-      <div className="flex justify-center min-h-screen bg-[#0B0F0C]">
-        <div className="app-container w-full max-w-[430px] min-h-screen relative overflow-x-hidden flex flex-col pt-10">
-          <AuthView />
+      <SettingsProvider>
+        <div className="flex justify-center min-h-screen bg-white dark:bg-[#0B0F0C] transition-colors">
+          <div className="app-container w-full max-w-[430px] min-h-screen relative overflow-x-hidden flex flex-col pt-10">
+            <AuthView />
+          </div>
         </div>
-      </div>
+      </SettingsProvider>
     );
   }
 
   return (
-    <Layout currentView={view} setView={setView}>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={view}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-        >
-          {renderView()}
-        </motion.div>
-      </AnimatePresence>
-    </Layout>
+    <SettingsProvider>
+      <Layout currentView={view} setView={setView}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={view}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            {renderView()}
+          </motion.div>
+        </AnimatePresence>
+      </Layout>
+    </SettingsProvider>
   )
 }
 

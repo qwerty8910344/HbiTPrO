@@ -6,13 +6,15 @@ import AddHabitModal from '../components/habits/AddHabitModal';
 import AdhdHabitCard from '../components/habits/AdhdHabitCard';
 import { format, addDays, startOfToday, isSameDay } from 'date-fns';
 import { supabase } from '../lib/supabase';
+import { useSettings } from '../context/SettingsContext';
 
 const TodayView = () => {
   const [selectedDate, setSelectedDate] = useState(startOfToday());
   const [category, setCategory] = useState('All');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [isAdhdMode, setIsAdhdMode] = useState(false);
+  const { settings, updateSetting } = useSettings();
+  const isAdhdMode = settings?.adhd_mode || false;
   
   const categories = ['All', 'Mindset', 'Health', 'Productivity', 'Self-Care'];
 
@@ -61,8 +63,23 @@ const TodayView = () => {
     const isCompleted = newCurrent >= habit.total;
     const newStreak = isCompleted && !habit.completed ? habit.streak + 1 : habit.streak;
 
+    // Optimistic UI
     setHabits(prev => prev.map(h => h.id === id ? { ...h, current: newCurrent, completed: isCompleted, streak: newStreak } : h));
+    
+    // Save to DB
     await supabase.from('habits').update({ current: newCurrent, completed: isCompleted, streak: newStreak }).eq('id', id);
+
+    // If completely newly finished, log it to history
+    if (isCompleted && !habit.completed) {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData?.session) {
+        // Try inserting (unique constraint prevents double logging per day)
+        await supabase.from('habit_logs').insert({
+          habit_id: id,
+          user_id: sessionData.session.user.id
+        }).select();
+      }
+    }
   };
 
   const handleUpdate = async (id, changes) => {
@@ -134,16 +151,14 @@ const TodayView = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          {/* ADHD Mode Toggle */}
+          {/* ADHD Mode Toggle (Context Controlled) */}
           <button 
-            onClick={() => setIsAdhdMode(!isAdhdMode)}
+            onClick={() => updateSetting('adhd_mode', !isAdhdMode)}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all tap-effect shadow-md border-2 ${
-              isAdhdMode 
-                ? 'bg-[#16A34A] text-white border-[#4ADE80]' 
-                : 'bg-[#111827] text-[#6B7280] border-[#111827]'
+              isAdhdMode ? 'bg-[#16A34A] border-[#16A34A] shadow-[#16A34A]/20' : 'bg-[#111827] border-white/5 shadow-black/20'
             }`}
           >
-            <Target size={22} strokeWidth={3} />
+            <Target size={22} className={isAdhdMode ? 'text-white' : 'text-[#6B7280]'} />
           </button>
 
           <button className="relative tap-effect group">

@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Moon, Lightbulb, Zap, Rocket, User, Bell, Lock, HelpCircle, LogOut, Globe } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useSettings } from '../context/SettingsContext';
 
 const SettingsView = () => {
   const [userEmail, setUserEmail] = useState('');
   const [loggingOut, setLoggingOut] = useState(false);
   
-  // Toggle states
-  const [adhdMode, setAdhdMode] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-  const [faceId, setFaceId] = useState(false);
-  const [language, setLanguage] = useState('English');
+  const { settings, updateSetting } = useSettings();
+  const { adhd_mode, dark_mode, face_id, language } = settings;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,41 +53,41 @@ const SettingsView = () => {
 
       {/* Accessibility & Design Modes */}
       <div className="ios-card bg-[#111827] p-0 overflow-hidden flex flex-col divide-y divide-white/5 shadow-lg">
-         <div className="p-5 flex items-center justify-between tap-effect" onClick={() => setAdhdMode(!adhdMode)}>
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => updateSetting('adhd_mode', !adhd_mode)}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-xl"><Lightbulb size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">ADHD Friendly Mode</span>
             </div>
-            <div className={`w-12 h-6 rounded-full relative shadow-inner transition-colors ${adhdMode ? 'bg-[#16A34A]' : 'bg-white/10'}`}>
-               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${adhdMode ? 'right-1' : 'left-1'}`} />
+            <div className={`w-12 h-6 rounded-full relative shadow-inner transition-colors ${adhd_mode ? 'bg-[#16A34A]' : 'bg-white/10'}`}>
+               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${adhd_mode ? 'right-1' : 'left-1'}`} />
             </div>
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect" onClick={() => setDarkMode(!darkMode)}>
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => updateSetting('dark_mode', !dark_mode)}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl"><Moon size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Dark Mode</span>
             </div>
-            <div className={`w-12 h-6 rounded-full relative shadow-inner transition-colors ${darkMode ? 'bg-[#16A34A]' : 'bg-white/10'}`}>
-               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${darkMode ? 'right-1' : 'left-1'}`} />
+            <div className={`w-12 h-6 rounded-full relative shadow-inner transition-colors ${dark_mode ? 'bg-[#16A34A]' : 'bg-white/10'}`}>
+               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${dark_mode ? 'right-1' : 'left-1'}`} />
             </div>
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect">
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => alert("Notification settings coming soon")}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-[#16A34A]/10 text-[#4ADE80] rounded-xl"><Bell size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Smart Reminders</span>
             </div>
             <ChevronRight size={18} className="text-[#6B7280]" />
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect" onClick={() => setFaceId(!faceId)}>
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => updateSetting('face_id', !face_id)}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl"><ShieldCheck size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Face ID / Security</span>
             </div>
-            <div className={`w-12 h-6 rounded-full relative shadow-inner transition-colors ${faceId ? 'bg-[#16A34A]' : 'bg-white/10'}`}>
-               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${faceId ? 'right-1' : 'left-1'}`} />
+            <div className={`w-12 h-6 rounded-full relative shadow-inner transition-colors ${face_id ? 'bg-[#16A34A]' : 'bg-white/10'}`}>
+               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${face_id ? 'right-1' : 'left-1'}`} />
             </div>
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect border-t border-white/5" onClick={() => setLanguage(language === 'English' ? 'Hindi' : 'English')}>
+         <div className="p-5 flex items-center justify-between tap-effect border-t border-white/5 cursor-pointer" onClick={() => updateSetting('language', language === 'English' ? 'Hindi' : 'English')}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl"><Globe size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Language</span>

@@ -1,24 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Flame, Brain } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { subDays, format, differenceInDays } from 'date-fns';
 
 const TrackingView = () => {
-  // Seeded stable heatmap data (won't change on re-render)
-  const [heatmapData] = React.useState(() => {
-    const weeks = 20;
-    const seed = 42;
-    return Array.from({ length: weeks }, (_, wi) =>
-      Array.from({ length: 7 }, (_, di) => {
-        const hash = ((wi * 7 + di + seed) * 2654435761) >>> 0;
-        const val = hash % 100;
-        if (val < 25) return 0;
-        if (val < 45) return 1;
-        if (val < 65) return 2;
-        if (val < 82) return 3;
-        return 4;
-      })
-    );
-  });
+  const [heatmapData, setHeatmapData] = useState([]);
+  const [totalHabits, setTotalHabits] = useState(0);
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  const fetchLogs = async () => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) return;
+      
+      // Fetch the last ~140 days (20 weeks) of habit completions
+      const pastDate = format(subDays(new Date(), 140), 'yyyy-MM-dd');
+      
+      const { data, error } = await supabase
+        .from('habit_logs')
+        .select('completed_date')
+        .eq('user_id', sessionData.session.user.id)
+        .gte('completed_date', pastDate);
+
+      if (error) throw error;
+      
+      setTotalHabits(data.length);
+
+      // Create a map of date -> count
+      const counts = {};
+      data.forEach(log => {
+         counts[log.completed_date] = (counts[log.completed_date] || 0) + 1;
+      });
+
+      // Build 20 weeks of data
+      const weeks = 20;
+      const matrix = Array.from({ length: weeks }, (_, wi) =>
+        Array.from({ length: 7 }, (_, di) => {
+           // We map the absolute grid cell index back into a date string
+           // 140 days = 20 * 7. Cell (wi, di) represents a day in the past.
+           const daysAgo = (weeks - 1 - wi) * 7 + (6 - di);
+           const cellDate = format(subDays(new Date(), daysAgo), 'yyyy-MM-dd');
+           const val = counts[cellDate] || 0;
+           
+           if (val === 0) return 0;
+           if (val <= 1) return 1;
+           if (val <= 3) return 2;
+           if (val <= 5) return 3;
+           return 4;
+        })
+      );
+      setHeatmapData(matrix);
+    } catch (err) {
+      console.error(err);
+      // Fallback empty matrix
+      setHeatmapData(Array.from({ length: 20 }, () => Array.from({ length: 7 }, () => 0)));
+    }
+  };
 
   const [activePalette, setActivePalette] = useState('green');
 
@@ -119,7 +160,7 @@ const TrackingView = () => {
       <div className="ios-card bg-[#111827] p-5">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-black uppercase tracking-widest text-[#6B7280]">Contribution Graph</h3>
-          <span className="text-[10px] font-bold text-[#E5E7EB] opacity-60">246 habits this year</span>
+          <span className="text-[10px] font-bold text-[#E5E7EB] opacity-60">{totalHabits} habits tracking period</span>
         </div>
         
         <div className="flex items-center gap-2 mb-4">

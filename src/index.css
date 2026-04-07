@@ -21,6 +21,33 @@
 }
 
 :root {
+  /* LIGHT MODE PALETTE */
+  --bg-main: #F9FAFB;
+  --card-dark: #FFFFFF;
+  --card-elevated: #F3F4F6;
+  --text-main: #111827;
+  --text-muted: #6B7280;
+  --primary-green: #16A34A;
+  --accent-green: #22C55E;
+  
+  /* Vibrant Cards (Light Mode) */
+  --habit-blue: #DBEAFE;
+  --habit-peach: #FCE7F3;
+  --habit-purple: #F3E8FF;
+  --habit-yellow: #FEF9C3;
+  --habit-green: #DCFCE7;
+  --habit-orange: #FFEDD5;
+  --habit-gold: #FEF08A;
+
+  --radius-ios: 28px;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-blur: blur(25px);
+  --ios-shadow: 0 12px 48px rgba(0, 0, 0, 0.05);
+  --ios-border: rgba(0, 0, 0, 0.06);
+  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark {
   /* ELITE GREEN DARK PALETTE */
   --bg-main: #0B0F0C;
   --card-dark: #111827;
@@ -40,13 +67,14 @@
   --habit-gold: #5F4D1E;
 
   /* Glassmorphism & UI Tokens — DARK MODE */
-  --radius-ios: 28px;
   --glass-bg: rgba(17, 24, 39, 0.75);
-  --glass-blur: blur(25px);
   --ios-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
   --ios-border: rgba(255, 255, 255, 0.06);
-  
-  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.adhd-mode .ios-card, .adhd-mode .ios-card-glass {
+  border: 2px solid var(--primary-green) !important;
+  opacity: 1 !important;
 }
 
 * {
