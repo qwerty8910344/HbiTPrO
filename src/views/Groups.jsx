@@ -62,7 +62,7 @@ const GroupsView = () => {
         .single();
       if (error) throw error;
 
-      await supabase.from('group_members').insert({ group_id: group.id, user_id: userId, role: 'admin' });
+      await supabase.from('group_members').insert({ group_id: group.id, user_id: userId });
 
       setGroups(prev => [group, ...prev]);
       setGroupName('');
@@ -87,7 +87,7 @@ const GroupsView = () => {
 
       if (!group) { alert('Invalid invite code'); return; }
 
-      await supabase.from('group_members').insert({ group_id: group.id, user_id: userId, role: 'member' });
+      await supabase.from('group_members').insert({ group_id: group.id, user_id: userId });
 
       setGroups(prev => [group, ...prev]);
       setJoinCode('');

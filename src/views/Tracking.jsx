@@ -20,13 +20,17 @@ const TrackingView = () => {
     );
   });
 
-  const intensityColors = [
-    'bg-white/[0.03]',  // level 0 - empty
-    'bg-[#16A34A]/20',  // level 1 - light
-    'bg-[#16A34A]/45',  // level 2 - medium
-    'bg-[#16A34A]/75',  // level 3 - high
-    'bg-[#4ADE80]',     // level 4 - max
-  ];
+  const [activePalette, setActivePalette] = useState('green');
+
+  const colorPalettes = {
+    green: ['bg-white/[0.03]', 'bg-[#16A34A]/20', 'bg-[#16A34A]/45', 'bg-[#16A34A]/75', 'bg-[#4ADE80]'],
+    blue: ['bg-white/[0.03]', 'bg-[#3B82F6]/20', 'bg-[#3B82F6]/45', 'bg-[#3B82F6]/75', 'bg-[#60A5FA]'],
+    purple: ['bg-white/[0.03]', 'bg-[#8B5CF6]/20', 'bg-[#8B5CF6]/45', 'bg-[#8B5CF6]/75', 'bg-[#A78BFA]'],
+    rose: ['bg-white/[0.03]', 'bg-[#F43F5E]/20', 'bg-[#F43F5E]/45', 'bg-[#F43F5E]/75', 'bg-[#FB7185]'],
+    orange: ['bg-white/[0.03]', 'bg-[#F97316]/20', 'bg-[#F97316]/45', 'bg-[#F97316]/75', 'bg-[#FB923C]'],
+  };
+
+  const intensityColors = colorPalettes[activePalette];
 
   const dayLabels = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
   const monthLabels = ['Jan', '', '', '', 'Feb', '', '', '', 'Mar', '', '', '', 'Apr', '', '', '', 'May', '', '', ''];
@@ -113,9 +117,21 @@ const TrackingView = () => {
 
       {/* GitHub-Style Contribution Heatmap */}
       <div className="ios-card bg-[#111827] p-5">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-black uppercase tracking-widest text-[#6B7280]">Contribution Graph</h3>
-          <span className="text-[10px] font-bold text-[#4ADE80]">246 habits this year</span>
+          <span className="text-[10px] font-bold text-[#E5E7EB] opacity-60">246 habits this year</span>
+        </div>
+        
+        <div className="flex items-center gap-2 mb-4">
+          {Object.keys(colorPalettes).map((key) => (
+             <button
+                key={key}
+                onClick={() => setActivePalette(key)}
+                className={`w-6 h-6 rounded-full tap-effect ring-2 ring-offset-2 ring-offset-[#111827] transition-all ${
+                   activePalette === key ? 'ring-white' : 'ring-transparent opacity-50 hover:opacity-100'
+                } ${colorPalettes[key][4]}`}
+             />
+          ))}
         </div>
         
         <div className="overflow-x-auto no-scrollbar">

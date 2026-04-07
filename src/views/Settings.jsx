@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Moon, Lightbulb, Zap, Rocket, User, Bell, Lock, HelpCircle, LogOut } from 'lucide-react';
+import { ShieldCheck, Moon, Lightbulb, Zap, Rocket, User, Bell, Lock, HelpCircle, LogOut, Globe } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const SettingsView = () => {
@@ -43,7 +43,7 @@ const SettingsView = () => {
          <p className="text-sm text-[#6B7280] leading-relaxed">Unlocked unlimited habits, advanced stats, widgets and multi-device sync for your entire family.</p>
          <div className="bg-[#16A34A]/10 p-4 rounded-2xl border border-[#16A34A]/20">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-[#4ADE80]/60 mb-1">Active Plan</p>
-            <p className="text-2xl font-black text-[#4ADE80]">₹1299 <span className="text-sm font-bold text-[#6B7280]">/ Lifetime</span></p>
+            <p className="text-2xl font-black text-[#4ADE80]">$29.99 <span className="text-sm font-bold text-[#6B7280]">/ Lifetime</span></p>
          </div>
       </div>
 
@@ -81,6 +81,16 @@ const SettingsView = () => {
             </div>
             <div className="w-12 h-6 bg-[#16A34A] rounded-full relative shadow-inner">
                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
+            </div>
+         </div>
+         <div className="p-5 flex items-center justify-between tap-effect border-t border-white/5">
+            <div className="flex items-center gap-3">
+               <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl"><Globe size={20} /></div>
+               <span className="font-bold tracking-tight text-[#E5E7EB]">Language</span>
+            </div>
+            <div className="flex items-center gap-2">
+               <span className="text-sm font-bold text-[#6B7280]">English</span>
+               <ChevronRight size={18} className="text-[#6B7280]" />
             </div>
          </div>
       </div>
