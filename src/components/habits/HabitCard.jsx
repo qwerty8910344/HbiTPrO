@@ -13,10 +13,10 @@ const HabitCard = ({ habit, onToggle, onUpdate }) => {
     e.stopPropagation();
     if (!isTargetMet) {
       confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: [color, '#ffffff']
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: [color, '#ffffff', '#FFD700']
       });
     }
     onToggle(id);
@@ -25,58 +25,62 @@ const HabitCard = ({ habit, onToggle, onUpdate }) => {
   return (
     <motion.div 
       layout
-      whileTap={{ scale: 0.98 }}
-      className="ios-card flex items-center gap-4 relative overflow-hidden group"
-      style={{ backgroundColor: color || 'var(--card-white)' }}
+      whileTap={{ scale: 0.97 }}
+      className="ios-card-vibrant flex items-center gap-4 relative overflow-hidden group mb-1"
+      style={{ backgroundColor: color }}
     >
+      {/* Glossy Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
+
       {/* Icon Area */}
-      <div className="w-14 h-14 rounded-2xl bg-white/40 flex items-center justify-center text-3xl shadow-sm">
+      <div className="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md flex items-center justify-center text-3xl shadow-inner border border-white/20 z-10">
         {icon}
       </div>
 
       {/* Info Area */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 z-10">
         <div className="flex justify-between items-start">
-          <h3 className="font-bold text-lg tracking-tight truncate pr-2">{title}</h3>
-          <div className="flex items-center gap-1 text-[var(--text-main)] font-bold text-xs opacity-80">
-             <Flame size={14} className="text-orange-500" />
+          <h3 className="font-extrabold text-[17px] tracking-tight truncate pr-2 text-black/80">{title}</h3>
+          <div className="flex items-center gap-1 text-black/60 font-black text-[10px] uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
+             <Flame size={12} className="text-orange-500 fill-orange-500" />
              {streak} Days
           </div>
         </div>
         
-        <div className="mt-1 flex flex-col gap-1.5">
-          <p className="caption font-bold uppercase tracking-wider text-[11px] opacity-60">
-            {total ? `${current}/${total} ${unit}` : 'Daily Goal'}
-          </p>
+        <div className="mt-1.5 flex flex-col gap-1.5">
+          <div className="flex justify-between items-end">
+            <p className="font-black text-[10px] uppercase tracking-widest text-black/40">
+               {total ? `${current}/${total} ${unit}` : 'Daily Goal'}
+            </p>
+            {isTargetMet && <span className="text-[10px] font-black text-black/60 bg-white/30 px-2 rounded-md">MET</span>}
+          </div>
           
-          {total && (
-            <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
-              <motion.div 
-                className="h-full bg-black/20 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min(progress, 100)}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-              />
-            </div>
-          )}
+          <div className="h-2 w-full bg-black/10 rounded-full overflow-hidden shadow-inner p-[1px]">
+            <motion.div 
+              className="h-full bg-white/60 rounded-full shadow-sm"
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(progress, 100)}%` }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </div>
         </div>
       </div>
 
       {/* Action Button */}
       <button 
         onClick={handleComplete}
-        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-sm ${
+        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg tap-effect z-10 ${
           isTargetMet 
-            ? 'bg-green-400 text-white' 
-            : 'bg-white/60 hover:bg-white text-black/40'
+            ? 'bg-emerald-400 text-white border-2 border-white/60' 
+            : 'bg-white/80 text-black/50 border border-white/20 hover:bg-white'
         }`}
       >
-        {isTargetMet ? <Check size={24} strokeWidth={3} /> : <Plus size={24} strokeWidth={3} />}
+        {isTargetMet ? <Check size={26} strokeWidth={3.5} /> : <Plus size={26} strokeWidth={3.5} />}
       </button>
 
-      {/* Streak Glow (Subtle) */}
-      {streak > 300 && (
-         <div className="absolute -right-4 -top-4 w-12 h-12 bg-yellow-400/20 blur-2xl rounded-full" />
+      {/* Selection Glow for Active Habits */}
+      {!isTargetMet && (
+         <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-white/5 blur-3xl rounded-full" />
       )}
     </motion.div>
   );

@@ -8,23 +8,23 @@
   --text-muted: #8E8E93;
   --primary-pink: #FF4D6D;
   
-  /* Habit Specific Pastels (Screenshot Accurate) */
-  --habit-blue: #E3F2FD;
-  --habit-peach: #FFF0E0;
-  --habit-purple: #F3E5F5;
-  --habit-yellow: #FFF9C4;
-  --habit-green: #E8F5E9;
-  --habit-orange: #FFF3E0;
-  --habit-gold: #FFF8E1;
+  /* PSYCHOLOGICAL VIBRANT CARDS (REWARD COLORS) */
+  --habit-blue: #D1E9FF;
+  --habit-peach: #FFD6D6;
+  --habit-purple: #D7D1FF;
+  --habit-yellow: #FFF2D1;
+  --habit-green: #D1FFD6;
+  --habit-orange: #FFE4D1;
+  --habit-gold: #FFEBB0;
 
   /* Glassmorphism & UI Tokens */
-  --radius-ios: 25px;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-blur: blur(20px);
-  --ios-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
-  --ios-border: rgba(255, 255, 255, 0.3);
+  --radius-ios: 28px;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-blur: blur(25px);
+  --ios-shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
+  --ios-border: rgba(255, 255, 255, 0.4);
   
-  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -48,10 +48,19 @@ body {
 .ios-card {
   background: var(--card-white);
   border-radius: var(--radius-ios);
-  padding: 20px;
+  padding: 16px 20px;
   box-shadow: var(--ios-shadow);
   border: 1px solid var(--ios-border);
   transition: var(--transition-smooth);
+}
+
+.ios-card-vibrant {
+  border-radius: var(--radius-ios);
+  padding: 16px 20px;
+  box-shadow: var(--ios-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: var(--transition-smooth);
+  color: #1C1C1E;
 }
 
 .ios-card-glass {
@@ -60,7 +69,7 @@ body {
   -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-ios);
   border: 1px solid var(--ios-border);
-  box-shadow: var(--ios-shadow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 /* MOBILE OPTIMIZED LAYOUT */
