@@ -17,47 +17,55 @@ const TodayView = () => {
   const categories = ['All', 'Mindset', 'Health', 'Productivity', 'Self-Care'];
 
   const [habits, setHabits] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('');
+
+  // Time-based greeting
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
 
   // Fetch from Supabase
   useEffect(() => {
     fetchHabits();
-  }, [selectedDate]); // Refetch if date filtering is needed in future
+  }, [selectedDate]);
 
   const fetchHabits = async () => {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) return;
       
-      const { data, error } = await supabase
-        .from('habits')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const email = sessionData.session.user.email || '';
+      setUserName(email.split('@')[0]);
+      
+      const [habitsData, groupsData] = await Promise.all([
+        supabase.from('habits').select('*').order('created_at', { ascending: false }),
+        supabase.from('groups').select('*').order('created_at', { ascending: false })
+      ]);
         
-      if (error) throw error;
-      setHabits(data || []);
+      if (habitsData.error) throw habitsData.error;
+      if (groupsData.error) throw groupsData.error;
+      
+      setHabits(habitsData.data || []);
+      setGroups(groupsData.data || []);
     } catch (err) {
-      console.error("Error fetching habits:", err);
+      console.error("Error fetching data:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleToggle = async (id) => {
-    // Optimistic UI
     const habit = habits.find(h => h.id === id);
     const newCurrent = habit.current >= habit.total ? habit.current : habit.current + 1;
     const isCompleted = newCurrent >= habit.total;
     const newStreak = isCompleted && !habit.completed ? habit.streak + 1 : habit.streak;
 
     setHabits(prev => prev.map(h => h.id === id ? { ...h, current: newCurrent, completed: isCompleted, streak: newStreak } : h));
-
-    // Supabase Sync
     await supabase.from('habits').update({ current: newCurrent, completed: isCompleted, streak: newStreak }).eq('id', id);
   };
 
   const handleUpdate = async (id, changes) => {
-    // changes object e.g. { memo: "...", mood: "..." }
     setHabits(prev => prev.map(h => h.id === id ? { ...h, ...changes } : h));
     await supabase.from('habits').update(changes).eq('id', id);
   };
@@ -66,7 +74,6 @@ const TodayView = () => {
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) return;
     
-    // Remove local 'id' so Supabase generates a UUID, but save everything else
     const { id, ...habitToInsert } = newHabit;
     habitToInsert.user_id = sessionData.session.user.id;
 
@@ -95,7 +102,7 @@ const TodayView = () => {
         <div className="relative">
           <button 
             onClick={() => setShowDropdown(!showDropdown)}
-            className="text-red-500 font-black text-sm bg-white/60 backdrop-blur-md px-5 py-2.5 rounded-full flex items-center gap-2 shadow-sm border border-white/20 tap-effect"
+            className="text-[#4ADE80] font-black text-sm bg-[#111827] px-5 py-2.5 rounded-full flex items-center gap-2 shadow-sm border border-[#16A34A]/20 tap-effect"
           >
             {category} <ChevronDown size={18} strokeWidth={3} />
           </button>
@@ -106,13 +113,13 @@ const TodayView = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full left-0 mt-2 w-40 bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden"
+                className="absolute top-full left-0 mt-2 w-40 bg-[#111827]/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden z-50"
               >
                 {categories.map(cat => (
                   <button 
                     key={cat}
                     onClick={() => { setCategory(cat); setShowDropdown(false); }}
-                    className={`w-full text-left px-5 py-3 text-sm font-bold transition-all ${category === cat ? 'bg-red-400 text-white' : 'hover:bg-red-400/10'}`}
+                    className={`w-full text-left px-5 py-3 text-sm font-bold transition-all ${category === cat ? 'bg-[#16A34A] text-white' : 'text-[#E5E7EB] hover:bg-[#16A34A]/10'}`}
                   >
                     {cat}
                   </button>
@@ -123,7 +130,7 @@ const TodayView = () => {
         </div>
         
         <div className="flex flex-col items-center">
-           <h3 className="text-[22px] font-black tracking-tighter text-black/90">Good Morning, Dot</h3>
+           <h3 className="text-[22px] font-black tracking-tighter text-[#E5E7EB]">{greeting}, {userName || 'Pro'}</h3>
         </div>
         
         <div className="flex items-center gap-2">
@@ -132,18 +139,18 @@ const TodayView = () => {
             onClick={() => setIsAdhdMode(!isAdhdMode)}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all tap-effect shadow-md border-2 ${
               isAdhdMode 
-                ? 'bg-black text-white border-black' 
-                : 'bg-white/80 text-black/60 border-white backdrop-blur-md'
+                ? 'bg-[#16A34A] text-white border-[#4ADE80]' 
+                : 'bg-[#111827] text-[#6B7280] border-[#111827]'
             }`}
           >
             <Target size={22} strokeWidth={3} />
           </button>
 
           <button className="relative tap-effect group">
-             <div className="w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden group-hover:scale-110 transition-transform">
-               <img src="https://i.pravatar.cc/150?u=a2" alt="Dot" className="w-full h-full object-cover" />
+             <div className="w-12 h-12 rounded-full border-4 border-[#111827] shadow-lg overflow-hidden group-hover:scale-110 transition-transform">
+               <img src="https://i.pravatar.cc/150?u=a2" alt="User" className="w-full h-full object-cover" />
              </div>
-             <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-400 border-2 border-white rounded-full flex items-center justify-center">
+             <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#4ADE80] border-2 border-[#0B0F0C] rounded-full flex items-center justify-center">
                 <Sun size={12} fill="white" className="text-white" />
              </div>
           </button>
@@ -178,13 +185,13 @@ const TodayView = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="ios-card bg-white/50 backdrop-blur-md p-4 py-8 flex flex-col items-center gap-4 text-center border-dashed border-2 border-white/60 shadow-xl"
+              className="ios-card bg-[#111827] p-4 py-8 flex flex-col items-center gap-4 text-center border-dashed border-2 border-[#16A34A]/20 shadow-xl"
             >
-               <h1 className="text-4xl font-black tracking-tighter leading-none text-black/80">Build Habits</h1>
-               <p className="text-xl font-bold text-[#8E8E93]">Plan your goals</p>
+               <h1 className="text-4xl font-black tracking-tighter leading-none text-[#E5E7EB]">Build Habits</h1>
+               <p className="text-xl font-bold text-[#6B7280]">Plan your goals</p>
                
-               <div className="mt-2 flex items-center gap-2 bg-red-400/10 text-red-400 px-6 py-2 rounded-full font-black text-sm uppercase tracking-widest shadow-inner border border-red-400/20">
-                  You have <span className="w-7 h-7 bg-red-400 text-white rounded-full flex items-center justify-center text-xs">{habitsLeft}</span> habits left for today
+               <div className="mt-2 flex items-center gap-2 bg-[#16A34A]/10 text-[#4ADE80] px-6 py-2 rounded-full font-black text-sm uppercase tracking-widest shadow-inner border border-[#16A34A]/20">
+                  You have <span className="w-7 h-7 bg-[#16A34A] text-white rounded-full flex items-center justify-center text-xs">{habitsLeft}</span> habits left for today
                </div>
             </motion.div>
 
@@ -201,16 +208,16 @@ const TodayView = () => {
                     onClick={() => setSelectedDate(day)}
                     className="flex flex-col items-center gap-4 tap-effect flex-shrink-0 min-w-[50px]"
                   >
-                    <span className="text-[10px] font-black text-[#8E8E93] uppercase tracking-[0.2em]">
+                    <span className="text-[10px] font-black text-[#6B7280] uppercase tracking-[0.2em]">
                       {dayName}
                     </span>
                     <div className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-[17px] transition-all relative border-2 ${
                       isSelected 
-                        ? 'bg-red-400 text-white border-white shadow-lg scale-110' 
-                        : 'bg-white text-red-300 border-red-50'
+                        ? 'bg-[#16A34A] text-white border-[#4ADE80] shadow-lg shadow-[#16A34A]/30 scale-110' 
+                        : 'bg-[#111827] text-[#6B7280] border-[#111827]/50'
                     }`}>
                       {format(day, 'd')}
-                      {isToday && !isSelected && <div className="absolute -top-1 w-2 h-2 bg-red-500 border-2 border-white rounded-full" />}
+                      {isToday && !isSelected && <div className="absolute -top-1 w-2 h-2 bg-[#4ADE80] border-2 border-[#0B0F0C] rounded-full" />}
                       {isToday && isSelected && <span className="absolute -top-3 text-[14px]">👑</span>}
                     </div>
                   </button>
@@ -232,6 +239,7 @@ const TodayView = () => {
                   >
                     <HabitCard 
                       habit={habit} 
+                      groups={groups}
                       onToggle={handleToggle}
                       onUpdate={handleUpdate}
                     />
@@ -243,13 +251,13 @@ const TodayView = () => {
         </AnimatePresence>
       )}
 
-      {/* FLOATING ACTION BUTTON (SS POSITIONED RIGHT) */}
+      {/* FLOATING ACTION BUTTON */}
       {!isAdhdMode && (
         <motion.button 
           onClick={() => setShowAddModal(true)}
           whileHover={{ scale: 1.15, rotate: 90 }}
           whileTap={{ scale: 0.85 }}
-          className="fixed bottom-28 right-8 w-16 h-16 bg-gradient-to-tr from-[#FF69B4] to-[#FFD700] text-white rounded-full shadow-[0_12px_40px_rgba(255,105,180,0.5)] flex items-center justify-center z-[100] border-4 border-white/60 tap-effect"
+          className="fixed bottom-28 right-8 w-16 h-16 bg-gradient-to-tr from-[#16A34A] to-[#4ADE80] text-white rounded-full shadow-[0_12px_40px_rgba(22,163,74,0.5)] flex items-center justify-center z-[100] border-4 border-[#0B0F0C]/60 tap-effect"
         >
           <Plus size={36} strokeWidth={4} />
         </motion.button>

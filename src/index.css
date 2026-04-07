@@ -1,46 +1,50 @@
 @import "tailwindcss";
 
 @theme {
-  /* HABITPRO PREMIUM iOS PALETTE */
-  --color-bg-main: #FFF0F2;
-  --color-card-white: #FFFFFF;
-  --color-text-main: #1C1C1E;
-  --color-text-muted: #8E8E93;
-  --color-primary-pink: #FF4D6D;
+  /* ELITE GREEN DARK PALETTE */
+  --color-bg-main: #0B0F0C;
+  --color-card-dark: #111827;
+  --color-card-elevated: #1A2332;
+  --color-text-main: #E5E7EB;
+  --color-text-muted: #6B7280;
+  --color-primary-green: #16A34A;
+  --color-accent-green: #4ADE80;
   
-  /* PSYCHOLOGICAL VIBRANT CARDS (REWARD COLORS) */
-  --color-habit-blue: #D1E9FF;
-  --color-habit-peach: #FFD6D6;
-  --color-habit-purple: #D7D1FF;
-  --color-habit-yellow: #FFF2D1;
-  --color-habit-green: #D1FFD6;
-  --color-habit-orange: #FFE4D1;
-  --color-habit-gold: #FFEBB0;
+  /* PSYCHOLOGICAL VIBRANT CARDS (REWARD COLORS) — rich for dark bg */
+  --color-habit-blue: #1E3A5F;
+  --color-habit-peach: #5F1E2E;
+  --color-habit-purple: #3B1E5F;
+  --color-habit-yellow: #5F4D1E;
+  --color-habit-green: #1E5F2E;
+  --color-habit-orange: #5F3A1E;
+  --color-habit-gold: #5F4D1E;
 }
 
 :root {
-  /* HABITPRO PREMIUM iOS PALETTE */
-  --bg-main: #FFF0F2;
-  --card-white: #FFFFFF;
-  --text-main: #1C1C1E;
-  --text-muted: #8E8E93;
-  --primary-pink: #FF4D6D;
+  /* ELITE GREEN DARK PALETTE */
+  --bg-main: #0B0F0C;
+  --card-dark: #111827;
+  --card-elevated: #1A2332;
+  --text-main: #E5E7EB;
+  --text-muted: #6B7280;
+  --primary-green: #16A34A;
+  --accent-green: #4ADE80;
   
   /* PSYCHOLOGICAL VIBRANT CARDS (REWARD COLORS) */
-  --habit-blue: #D1E9FF;
-  --habit-peach: #FFD6D6;
-  --habit-purple: #D7D1FF;
-  --habit-yellow: #FFF2D1;
-  --habit-green: #D1FFD6;
-  --habit-orange: #FFE4D1;
-  --habit-gold: #FFEBB0;
+  --habit-blue: #1E3A5F;
+  --habit-peach: #5F1E2E;
+  --habit-purple: #3B1E5F;
+  --habit-yellow: #5F4D1E;
+  --habit-green: #1E5F2E;
+  --habit-orange: #5F3A1E;
+  --habit-gold: #5F4D1E;
 
-  /* Glassmorphism & UI Tokens */
+  /* Glassmorphism & UI Tokens — DARK MODE */
   --radius-ios: 28px;
-  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg: rgba(17, 24, 39, 0.75);
   --glass-blur: blur(25px);
-  --ios-shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
-  --ios-border: rgba(255, 255, 255, 0.4);
+  --ios-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  --ios-border: rgba(255, 255, 255, 0.06);
   
   --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -60,9 +64,9 @@ body {
   user-select: none;
 }
 
-/* iOS GLASS CARDS */
+/* DARK GLASS CARDS */
 .ios-card {
-  background: var(--card-white);
+  background: var(--card-dark);
   border-radius: var(--radius-ios);
   padding: 16px 20px;
   box-shadow: var(--ios-shadow);
@@ -74,9 +78,9 @@ body {
   border-radius: var(--radius-ios);
   padding: 16px 20px;
   box-shadow: var(--ios-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   transition: var(--transition-smooth);
-  color: #1C1C1E;
+  color: #E5E7EB;
 }
 
 .ios-card-glass {
@@ -84,8 +88,8 @@ body {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-ios);
-  border: 1px solid var(--ios-border);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* MOBILE OPTIMIZED LAYOUT */
@@ -119,12 +123,12 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  background-color: var(--card-white);
-  border: 1px solid rgba(0,0,0,0.05);
+  background-color: var(--card-dark);
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 .status-dot.active {
-  background-color: var(--primary-pink);
+  background-color: var(--primary-green);
   border: none;
 }
 

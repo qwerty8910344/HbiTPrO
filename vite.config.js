@@ -15,8 +15,8 @@ export default defineConfig({
         name: 'HabitPro',
         short_name: 'HabitPro',
         description: 'Elite Habit Tracking for High Achievers',
-        theme_color: '#A8E6CF',
-        background_color: '#0A0A0A',
+        theme_color: '#0B0F0C',
+        background_color: '#0B0F0C',
         display: 'standalone',
         icons: [
           {

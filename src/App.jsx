@@ -55,7 +55,7 @@ function App() {
   // Enforce authentication wrapper
   if (!session) {
     return (
-      <div className="flex justify-center min-h-screen bg-[var(--bg-main)]">
+      <div className="flex justify-center min-h-screen bg-[#0B0F0C]">
         <div className="app-container w-full max-w-[430px] min-h-screen relative overflow-x-hidden flex flex-col pt-10">
           <AuthView />
         </div>
