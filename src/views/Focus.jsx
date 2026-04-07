@@ -6,8 +6,40 @@ const FocusView = () => {
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [isActive, setIsActive] = useState(false);
   const [sound, setSound] = useState('Silent');
+  const [audio] = useState(new Audio());
 
-  const sounds = ['Silent', 'Tick', 'Cafe', 'Fire', 'Forest', 'Ocean', 'Storm', 'Water'];
+  const SOUND_URLS = {
+    'Silent': '',
+    'Tick': 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
+    'Cafe': 'https://assets.mixkit.co/active_storage/sfx/120/120-preview.mp3',
+    'Fire': 'https://assets.mixkit.co/active_storage/sfx/2458/2458-preview.mp3',
+    'Forest': 'https://assets.mixkit.co/active_storage/sfx/2459/2459-preview.mp3',
+    'Ocean': 'https://assets.mixkit.co/active_storage/sfx/2464/2464-preview.mp3',
+    'Storm': 'https://assets.mixkit.co/active_storage/sfx/124/124-preview.mp3',
+    'Water': 'https://assets.mixkit.co/active_storage/sfx/2381/2381-preview.mp3',
+  };
+
+  const sounds = Object.keys(SOUND_URLS);
+
+  // Handle ambient sound playback
+  useEffect(() => {
+    if (sound === 'Silent' || !isActive) {
+      audio.pause();
+    } else {
+      audio.src = SOUND_URLS[sound];
+      audio.loop = true;
+      audio.volume = 0.5;
+      audio.play().catch(e => console.log('Audio playback prevented:', e));
+    }
+  }, [sound, isActive]);
+
+  // Clean up audio on unmount
+  useEffect(() => {
+    return () => {
+      audio.pause();
+      audio.src = '';
+    };
+  }, []);
 
   useEffect(() => {
     let interval = null;

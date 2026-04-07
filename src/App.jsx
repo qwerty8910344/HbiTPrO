@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Layout from './components/layout/Layout'
 import TodayView from './views/Today'
 import ReportsView from './views/Reports'
@@ -7,10 +7,29 @@ import GroupsView from './views/Groups'
 import FocusView from './views/Focus'
 import MotivationView from './views/Motivation'
 import SettingsView from './views/Settings'
+import AuthView from './views/Auth'
 import { motion, AnimatePresence } from 'framer-motion'
+import { supabase } from './lib/supabase'
 
 function App() {
+  const [session, setSession] = useState(null);
   const [view, setView] = useState('today');
+
+  useEffect(() => {
+    // Initial fetch
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const renderView = () => {
     switch (view) {
@@ -32,6 +51,17 @@ function App() {
         return <TodayView />;
     }
   };
+
+  // Enforce authentication wrapper
+  if (!session) {
+    return (
+      <div className="flex justify-center min-h-screen bg-[var(--bg-main)]">
+        <div className="app-container w-full max-w-[430px] min-h-screen relative overflow-x-hidden flex flex-col pt-10">
+          <AuthView />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Layout currentView={view} setView={setView}>

@@ -1,8 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* HABITPRO PREMIUM iOS PALETTE */
+  --color-bg-main: #FFF0F2;
+  --color-card-white: #FFFFFF;
+  --color-text-main: #1C1C1E;
+  --color-text-muted: #8E8E93;
+  --color-primary-pink: #FF4D6D;
+  
+  /* PSYCHOLOGICAL VIBRANT CARDS (REWARD COLORS) */
+  --color-habit-blue: #D1E9FF;
+  --color-habit-peach: #FFD6D6;
+  --color-habit-purple: #D7D1FF;
+  --color-habit-yellow: #FFF2D1;
+  --color-habit-green: #D1FFD6;
+  --color-habit-orange: #FFE4D1;
+  --color-habit-gold: #FFEBB0;
+}
 
 :root {
   /* HABITPRO PREMIUM iOS PALETTE */
-  --bg-main: #FFF0F2; /* Soft Pastel Pink Base */
+  --bg-main: #FFF0F2;
   --card-white: #FFFFFF;
   --text-main: #1C1C1E;
   --text-muted: #8E8E93;
@@ -29,14 +47,12 @@
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
@@ -88,11 +104,6 @@ body {
   padding-bottom: 120px; /* Space for floating nav */
 }
 
-/* TYPOGRAPHY */
-h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
-h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
-.caption { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-
 /* ANIMATION UTILS */
 .tap-effect:active {
   transform: scale(0.96);
@@ -102,17 +113,6 @@ h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 /* CUSTOM SCROLLBARS (HIDDEN FOR NATIVE FEEL) */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* UTILITIES */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.gap-4 { gap: 1rem; }
-.w-full { width: 100%; }
-.m-auto { margin: auto; }
-.text-center { text-align: center; }
-.rounded-full { border-radius: 9999px; }
 
 /* STATUS DOTS FOR HEATMAP */
 .status-dot {
@@ -127,3 +127,10 @@ h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
   background-color: var(--primary-pink);
   border: none;
 }
+
+/* Spin animation for loader */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }
