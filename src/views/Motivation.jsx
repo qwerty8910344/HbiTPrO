@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Heart, Share2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Share2, Check } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 const quotes = [
   { text: "The secret of getting ahead is getting started.", author: "Mark Twain", emoji: "🚀" },
@@ -15,6 +16,23 @@ const quotes = [
 const MotivationView = () => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [saved, setSaved] = useState(new Set());
+
+  const handleSave = () => {
+    if (saved.has(current)) return;
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 }, colors: ['#4ADE80', '#16A34A'] });
+    setSaved(prev => new Set(prev).add(current));
+  };
+
+  const handleShare = async () => {
+    const text = `"${quotes[current].text}" - ${quotes[current].author}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'HabitPro Motivation', text }); } catch (e) {}
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('Quote copied to clipboard!');
+    }
+  };
 
   const next = () => { setDirection(1); setCurrent((c) => (c + 1) % quotes.length); };
   const prev = () => { setDirection(-1); setCurrent((c) => (c - 1 + quotes.length) % quotes.length); };
@@ -77,10 +95,21 @@ const MotivationView = () => {
 
       {/* Action Row */}
       <div className="flex gap-4">
-        <button className="flex items-center gap-2 px-6 py-3 bg-[#16A34A]/10 text-[#4ADE80] rounded-full font-black text-xs uppercase tracking-widest tap-effect border border-[#16A34A]/20">
-          <Heart size={16} /> Save
+        <button 
+          onClick={handleSave}
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest tap-effect transition-colors border ${
+            saved.has(current) 
+              ? 'bg-[#16A34A] text-white border-[#16A34A]' 
+              : 'bg-[#16A34A]/10 text-[#4ADE80] border-[#16A34A]/20'
+          }`}
+        >
+          {saved.has(current) ? <Check size={16} /> : <Heart size={16} />} 
+          {saved.has(current) ? 'Saved' : 'Save'}
         </button>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white/5 text-[#E5E7EB] rounded-full font-black text-xs uppercase tracking-widest tap-effect border border-white/5">
+        <button 
+          onClick={handleShare}
+          className="flex items-center gap-2 px-6 py-3 bg-white/5 text-[#E5E7EB] rounded-full font-black text-xs uppercase tracking-widest tap-effect border border-white/5"
+        >
           <Share2 size={16} /> Share
         </button>
       </div>

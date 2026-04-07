@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Volume2, Wind, Music, Sparkles } from 'lucide-react';
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Wind, Music, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FocusView = () => {
@@ -7,6 +7,7 @@ const FocusView = () => {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [selectedDuration, setSelectedDuration] = useState(25);
   const [selectedSound, setSelectedSound] = useState('');
+  const [isMuted, setIsMuted] = useState(false);
 
   const sounds = [
     { id: 'cafe', label: 'Cafe', icon: '☕' },
@@ -106,8 +107,8 @@ const FocusView = () => {
         >
           {isRunning ? <Pause size={36} strokeWidth={3} /> : <Play size={36} strokeWidth={3} className="ml-1" />}
         </motion.button>
-        <button onClick={() => {}} className="w-14 h-14 rounded-full bg-[#111827] text-[#6B7280] flex items-center justify-center shadow-lg border border-white/5 tap-effect">
-          <Volume2 size={24} strokeWidth={2.5} />
+        <button onClick={() => setIsMuted(!isMuted)} className={`w-14 h-14 rounded-full bg-[#111827] flex items-center justify-center shadow-lg border border-white/5 tap-effect transition-colors ${isMuted ? 'text-red-400' : 'text-[#6B7280]'}`}>
+          {isMuted ? <VolumeX size={24} strokeWidth={2.5} /> : <Volume2 size={24} strokeWidth={2.5} />}
         </button>
       </div>
 
