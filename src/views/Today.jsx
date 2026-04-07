@@ -111,9 +111,22 @@ const TodayView = () => {
     }
   };
 
+  const baseHabits = habits.filter(h => {
+    const dayName = format(selectedDate, 'eee').toLowerCase(); // 'sun', 'mon', etc.
+    
+    // Custom schedules explicit day matching
+    if (h.schedule_type === 'custom') {
+      const days = h.schedule_days || [];
+      if (days.length > 0 && !days.includes(dayName)) return false;
+    }
+    // "Weekly" could just mean pick one day, but for now we'll show weekly habits 
+    // unless you specify 'schedules' more rigidly.
+    return true;
+  });
+
   const filteredHabits = category === 'All' 
-    ? habits 
-    : habits.filter(h => h.category === category);
+    ? baseHabits 
+    : baseHabits.filter(h => h.category === category);
 
   const habitsLeft = habits.filter(h => !h.completed).length;
 

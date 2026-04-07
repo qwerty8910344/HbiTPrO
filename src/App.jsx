@@ -11,8 +11,10 @@ import AuthView from './views/Auth'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from './lib/supabase'
 import { SettingsProvider } from './context/SettingsContext'
+import { useReminders } from './hooks/useReminders'
 
 function App() {
+  useReminders();
   const [session, setSession] = useState(null);
   const [view, setView] = useState('today');
 
