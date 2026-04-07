@@ -3,13 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Moon, Lightbulb, Zap, Rocket, User, Bell, Lock, HelpCircle, LogOut, Globe } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useSettings } from '../context/SettingsContext';
+import { useSound } from '../hooks/useSound';
 
 const SettingsView = () => {
   const [userEmail, setUserEmail] = useState('');
   const [loggingOut, setLoggingOut] = useState(false);
   
   const { settings, updateSetting } = useSettings();
+  const { playTick } = useSound();
   const { adhd_mode, dark_mode, face_id, language } = settings;
+
+  const handleUpdate = (key, value) => {
+    playTick();
+    updateSetting(key, value);
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,7 +60,7 @@ const SettingsView = () => {
 
       {/* Accessibility & Design Modes */}
       <div className="ios-card bg-[#111827] p-0 overflow-hidden flex flex-col divide-y divide-white/5 shadow-lg">
-         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => updateSetting('adhd_mode', !adhd_mode)}>
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => handleUpdate('adhd_mode', !adhd_mode)}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-xl"><Lightbulb size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">ADHD Friendly Mode</span>
@@ -62,7 +69,7 @@ const SettingsView = () => {
                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${adhd_mode ? 'right-1' : 'left-1'}`} />
             </div>
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => updateSetting('dark_mode', !dark_mode)}>
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => handleUpdate('dark_mode', !dark_mode)}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl"><Moon size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Dark Mode</span>
@@ -78,7 +85,7 @@ const SettingsView = () => {
             </div>
             <ChevronRight size={18} className="text-[#6B7280]" />
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => updateSetting('face_id', !face_id)}>
+         <div className="p-5 flex items-center justify-between tap-effect cursor-pointer" onClick={() => handleUpdate('face_id', !face_id)}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl"><ShieldCheck size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Face ID / Security</span>
@@ -87,7 +94,7 @@ const SettingsView = () => {
                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${face_id ? 'right-1' : 'left-1'}`} />
             </div>
          </div>
-         <div className="p-5 flex items-center justify-between tap-effect border-t border-white/5 cursor-pointer" onClick={() => updateSetting('language', language === 'English' ? 'Hindi' : 'English')}>
+         <div className="p-5 flex items-center justify-between tap-effect border-t border-white/5 cursor-pointer" onClick={() => handleUpdate('language', language === 'English' ? 'Hindi' : 'English')}>
             <div className="flex items-center gap-3">
                <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl"><Globe size={20} /></div>
                <span className="font-bold tracking-tight text-[#E5E7EB]">Language</span>

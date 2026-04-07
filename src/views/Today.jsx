@@ -7,6 +7,7 @@ import AdhdHabitCard from '../components/habits/AdhdHabitCard';
 import { format, addDays, startOfToday, isSameDay } from 'date-fns';
 import { supabase } from '../lib/supabase';
 import { useSettings } from '../context/SettingsContext';
+import { useSound } from '../hooks/useSound';
 
 const TodayView = () => {
   const [selectedDate, setSelectedDate] = useState(startOfToday());
@@ -15,6 +16,7 @@ const TodayView = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const { settings, updateSetting } = useSettings();
   const isAdhdMode = settings?.adhd_mode || false;
+  const { playTick, playChime } = useSound();
   
   const categories = ['All', 'Mindset', 'Health', 'Productivity', 'Self-Care'];
 
@@ -69,8 +71,14 @@ const TodayView = () => {
     // Save to DB
     await supabase.from('habits').update({ current: newCurrent, completed: isCompleted, streak: newStreak }).eq('id', id);
 
+    // Audio Feedback
+    if (!isCompleted || habit.completed) {
+      playTick();
+    }
+
     // If completely newly finished, log it to history
     if (isCompleted && !habit.completed) {
+      playChime();
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData?.session) {
         // Try inserting (unique constraint prevents double logging per day)
