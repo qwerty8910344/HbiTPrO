@@ -10,24 +10,23 @@ import SettingsView from './views/Settings'
 import AuthView from './views/Auth'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from './lib/supabase'
-import { SettingsProvider } from './context/SettingsContext'
+import { SettingsProvider, useSettings } from './context/SettingsContext'
 import { useReminders } from './hooks/useReminders'
+import Onboarding from './components/auth/Onboarding'
 
-function App() {
+function AppContent() {
   useReminders();
+  const { settings, loading } = useSettings();
   const [session, setSession] = useState(null);
   const [view, setView] = useState('today');
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
 
   useEffect(() => {
-    // Initial fetch
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
@@ -36,53 +35,53 @@ function App() {
 
   const renderView = () => {
     switch (view) {
-      case 'today':
-        return <TodayView />;
-      case 'reports':
-        return <ReportsView />;
-      case 'stats':
-        return <TrackingView />;
-      case 'groups':
-        return <GroupsView />;
-      case 'focus':
-        return <FocusView />;
-      case 'motivation':
-        return <MotivationView />;
-      case 'settings':
-        return <SettingsView />;
-      default:
-        return <TodayView />;
+      case 'today': return <TodayView />;
+      case 'reports': return <ReportsView />;
+      case 'stats': return <TrackingView />;
+      case 'groups': return <GroupsView />;
+      case 'focus': return <FocusView />;
+      case 'motivation': return <MotivationView />;
+      case 'settings': return <SettingsView />;
+      default: return <TodayView />;
     }
   };
 
-  // Enforce authentication wrapper
   if (!session) {
     return (
-      <SettingsProvider>
-        <div className="flex justify-center min-h-screen bg-white dark:bg-[#0B0F0C] transition-colors">
-          <div className="app-container w-full max-w-[430px] min-h-screen relative overflow-x-hidden flex flex-col pt-10">
-            <AuthView />
-          </div>
+      <div className="flex justify-center min-h-screen bg-white dark:bg-[#0B0F0C] transition-colors">
+        <div className="app-container w-full max-w-[430px] min-h-screen relative overflow-x-hidden flex flex-col pt-10">
+          <AuthView />
         </div>
-      </SettingsProvider>
+      </div>
     );
   }
 
+  // Check if onboarding is needed (no DOB)
+  if (!loading && !settings?.dob && !onboardingComplete) {
+    return <Onboarding onComplete={() => setOnboardingComplete(true)} />;
+  }
+
+  return (
+    <Layout currentView={view} setView={setView}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={view}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          {renderView()}
+        </motion.div>
+      </AnimatePresence>
+    </Layout>
+  );
+}
+
+function App() {
   return (
     <SettingsProvider>
-      <Layout currentView={view} setView={setView}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={view}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            {renderView()}
-          </motion.div>
-        </AnimatePresence>
-      </Layout>
+      <AppContent />
     </SettingsProvider>
   )
 }

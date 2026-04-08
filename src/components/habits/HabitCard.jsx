@@ -133,7 +133,7 @@ const HabitCard = ({ habit, groups = [], onToggle, onUpdate }) => {
               initial={{ opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="absolute top-full right-0 mt-2 w-48 bg-[#111827]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col p-1"
+              className="absolute top-full right-0 mt-2 w-48 bg-[var(--card-dark)] backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col p-1"
             >
               <div className="px-3 py-2 border-b border-white/5 flex justify-between items-center">
                  <span className="text-[10px] font-black uppercase text-white/40 tracking-wider">Share to...</span>

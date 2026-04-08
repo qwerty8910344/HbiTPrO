@@ -1,16 +1,20 @@
-import React from 'react';
-import { Home, Users, BarChart3, Timer, Settings, FileText, Sparkles } from 'lucide-react';
+import { Home, BarChart3, Timer, Settings, FileText, Sparkles, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../../context/SettingsContext';
+import { t } from '../../lib/i18n';
 
 const BottomNav = ({ currentView, setView }) => {
+  const { settings } = useSettings();
+  const lang = settings.language || 'English';
+  
   const navItems = [
-    { id: 'today', icon: <Home size={22} strokeWidth={2.5} />, label: 'Home' },
-    { id: 'stats', icon: <BarChart3 size={22} strokeWidth={2.5} />, label: 'Stats' },
-    { id: 'reports', icon: <FileText size={22} strokeWidth={2.5} />, label: 'Reports' },
-    { id: 'groups', icon: <Users size={22} strokeWidth={2.5} />, label: 'Squad' },
-    { id: 'focus', icon: <Timer size={22} strokeWidth={2.5} />, label: 'Focus' },
+    { id: 'today', icon: <Home size={22} strokeWidth={2.5} />, label: t('today', lang) },
+    { id: 'stats', icon: <BarChart3 size={22} strokeWidth={2.5} />, label: t('stats', lang) },
+    { id: 'reports', icon: <FileText size={22} strokeWidth={2.5} />, label: 'Elite' },
+    { id: 'groups', icon: <Users size={22} strokeWidth={2.5} />, label: t('groups', lang) },
+    { id: 'focus', icon: <Timer size={22} strokeWidth={2.5} />, label: t('focus', lang) },
     { id: 'motivation', icon: <Sparkles size={22} strokeWidth={2.5} />, label: 'Vibe' },
-    { id: 'settings', icon: <Settings size={22} strokeWidth={2.5} />, label: 'Settings' },
+    { id: 'settings', icon: <Settings size={22} strokeWidth={2.5} />, label: 'Elite' },
   ];
 
   return (

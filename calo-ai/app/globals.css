@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #020617;
+  --foreground: #f8fafc;
+  --primary: #4ade80;
+  --action: #f97316;
+  --ai: #2563eb;
+  --danger: #ef4444;
+  --streak-gold: #facc15;
+  --card: rgba(15, 23, 42, 0.6);
+  --radius: 2rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.premium-shadow {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+@layer components {
+  .btn-dopamine {
+    @apply bg-[var(--action)] text-white font-black py-4 px-8 rounded-3xl transition-all active:scale-95 shadow-xl shadow-orange-500/20 animate-pulse-orange;
+  }
+  
+  .ios-card {
+    @apply bg-[var(--card)] rounded-[2.5rem] p-6 border border-white/5 backdrop-blur-md;
+  }
+
+  .text-neon { @apply text-[var(--primary)] drop-shadow-[0_0_8px_rgba(74,222,128,0.4)]; }
+  .text-action { @apply text-[var(--action)] drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]; }
+  .text-danger { @apply text-[var(--danger)] drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]; }
+}
+
+/* Addiction Core Animations */
+@keyframes pulseOrange {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 20px 5px rgba(249, 115, 22, 0.2); }
+}
+
+.animate-pulse-orange {
+  animation: pulseOrange 2s infinite ease-in-out;
+}
+
+@keyframes rewardFlash {
+  0% { opacity: 0; }
+  20% { opacity: 0.4; background: #4ade80; }
+  100% { opacity: 0; }
+}
+
+.reward-flash-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  animation: rewardFlash 0.3s ease-out forwards;
+}
+
+@keyframes goldShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.text-gold {
+  background: linear-gradient(90deg, #facc15, #fef08a, #facc15);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 3s linear infinite;
+}

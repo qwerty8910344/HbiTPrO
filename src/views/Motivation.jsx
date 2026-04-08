@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Heart, Share2, Check } from 'lucide-react';
+import { Heart, Search, ChevronLeft, ChevronRight, Share2, Bookmark, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import allQuotes from '../data/quotes.json';
+import quotesData from '../data/quotes.json';
+import { useSettings } from '../context/SettingsContext';
+import { useSound } from '../hooks/useSound';
+import { t } from '../lib/i18n';
 
 const emojis = ["🚀", "💎", "🌟", "🔥", "❤️", "🧬", "📈", "💡", "🧠", "✨", "🎯"];
 
 const MotivationView = () => {
+  const { settings } = useSettings();
+  const lang = settings.language || 'English';
+  const { playTick } = useSound();
   const [currentQuote, setCurrentQuote] = useState({ text: "Loading...", author: "", emoji: "🚀" });
   const [direction, setDirection] = useState(0);
   const [saved, setSaved] = useState(new Set());
@@ -16,9 +22,9 @@ const MotivationView = () => {
   }, []);
 
   const getRandomQuote = () => {
-    const randomIdx = Math.floor(Math.random() * allQuotes.length);
+    const randomIdx = Math.floor(Math.random() * quotesData.length);
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    const q = allQuotes[randomIdx];
+    const q = quotesData[randomIdx];
     setCurrentQuote({ text: q.text, author: q.author || "Unknown", emoji: randomEmoji });
   };
 
@@ -38,8 +44,8 @@ const MotivationView = () => {
     }
   };
 
-  const next = () => { setDirection(1); getRandomQuote(); };
-  const prev = () => { setDirection(-1); getRandomQuote(); };
+  const next = () => { playTick(); setDirection(1); getRandomQuote(); };
+  const prev = () => { playTick(); setDirection(-1); getRandomQuote(); };
 
   const quote = currentQuote;
 
@@ -50,24 +56,22 @@ const MotivationView = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 items-center">
+    <div className="flex flex-col gap-6 h-full">
       <header className="flex flex-col items-center text-center">
-        <h1 className="text-[32px] font-black tracking-tight mt-4 text-[#E5E7EB]">Daily Vibe</h1>
-        <p className="text-[#6B7280] font-medium text-lg italic">Fuel your fire</p>
+        <h1 className="text-[32px] font-black tracking-tight mt-4 text-[var(--text-main)]">{t('motivation', lang)}</h1>
+        <p className="text-[var(--text-muted)] font-medium text-lg italic">{t('hero_subtitle', lang)}</p>
       </header>
 
       {/* Quote Card */}
       <div className="w-full relative" style={{ minHeight: '320px' }}>
-        <AnimatePresence mode="wait" custom={direction}>
+        <AnimatePresence mode="wait">
           <motion.div
             key={currentQuote.text}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="ios-card bg-[#111827] p-8 flex flex-col items-center gap-6 text-center absolute inset-0 border border-[#16A34A]/10"
+            initial={{ opacity: 0, scale: 0.9, rotateY: 90 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            exit={{ opacity: 0, scale: 0.9, rotateY: -90 }}
+            transition={{ duration: 0.6, ease: "circOut" }}
+            className="ios-card bg-[var(--card-dark)] p-8 flex flex-col items-center gap-6 text-center absolute inset-0 border border-[#16A34A]/10"
           >
             <div className="absolute top-4 right-4 z-10 text-white">
               <button 
@@ -75,14 +79,14 @@ const MotivationView = () => {
                 className={`p-3 rounded-full transition-all tap-effect shadow-md border ${
                   saved.has(currentQuote.text) 
                     ? 'bg-[#16A34A] text-white border-[#4ADE80]' 
-                    : 'bg-[#111827] text-[#6B7280] border-white/10 hover:border-[#4ADE80]/30 hover:text-[#4ADE80]'
+                    : 'bg-[var(--card-dark)] text-[var(--text-muted)] border-white/10 hover:border-[#4ADE80]/30 hover:text-[#4ADE80]'
                 }`}
               >
                 {saved.has(currentQuote.text) ? <Check size={20} className="drop-shadow-sm"/> : <Heart size={20} />}
               </button>
             </div>
             <span className="text-[80px]">{quote.emoji}</span>
-            <p className="text-xl font-bold leading-relaxed text-[#E5E7EB] italic">
+            <p className="text-xl font-bold leading-relaxed text-[var(--text-main)] italic">
               "{quote.text}"
             </p>
             <p className="text-sm font-black uppercase tracking-widest text-[#4ADE80] mb-2">
@@ -94,19 +98,20 @@ const MotivationView = () => {
 
       {/* Controls */}
       <div className="flex items-center gap-8 mt-2">
-        <button onClick={prev} className="w-14 h-14 rounded-full bg-[#111827] text-[#6B7280] flex items-center justify-center shadow-lg border border-white/5 tap-effect">
-          <ChevronLeft size={24} strokeWidth={3} />
+        <button onClick={prev} className="w-14 h-14 rounded-full bg-[var(--card-dark)] text-[var(--text-muted)] flex items-center justify-center shadow-lg border border-white/5 tap-effect">
+          <ChevronLeft size={28} />
         </button>
 
         <button 
-          onClick={handleShare}
-          className="flex items-center gap-2 px-6 py-3 bg-[#111827] text-[#E5E7EB] rounded-full font-black text-xs uppercase tracking-widest tap-effect border border-white/5 shadow-lg"
+          onClick={next}
+          className="flex items-center gap-2 px-6 py-3 bg-[var(--card-dark)] text-[var(--text-main)] rounded-full font-black text-xs uppercase tracking-widest tap-effect border border-white/5 shadow-lg"
         >
-          <Share2 size={16} /> Share
+          <Search size={18} />
+          {lang === 'Hindi' ? 'और खोजें' : 'Daily Discovery'}
         </button>
 
-        <button onClick={next} className="w-14 h-14 rounded-full bg-[#111827] text-[#6B7280] flex items-center justify-center shadow-lg border border-white/5 tap-effect">
-          <ChevronRight size={24} strokeWidth={3} />
+        <button onClick={next} className="w-14 h-14 rounded-full bg-[var(--card-dark)] text-[var(--text-muted)] flex items-center justify-center shadow-lg border border-white/5 tap-effect">
+          <ChevronRight size={28} />
         </button>
       </div>
     </div>

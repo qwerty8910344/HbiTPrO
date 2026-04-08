@@ -1,6 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
 import { Trophy, Flame, Target } from 'lucide-react';
+import PricingCard from '../components/ui/PricingCard';
+import { useSettings } from '../context/SettingsContext';
+import { t } from '../lib/i18n';
 
 const habits = [
   { name: 'Meditation', emoji: '🧘‍♀️', color: '#3B1E5F', days: [true, true, false, true, true, false, true], rate: 71 },
@@ -10,35 +11,38 @@ const habits = [
 ];
 
 const ReportsView = () => {
+  const { settings } = useSettings();
+  const lang = settings.language || 'English';
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col items-center text-center">
-        <h1 className="text-[32px] font-black tracking-tight mt-4 text-[#E5E7EB]">Weekly Report</h1>
-        <p className="text-[#6B7280] font-medium text-lg italic">Your performance breakdown</p>
+        <h1 className="text-[32px] font-black tracking-tight mt-4 text-[var(--text-main)]">{t('weekly_report', lang)}</h1>
+        <p className="text-[var(--text-muted)] font-medium text-lg italic">{t('performance_breakdown', lang)}</p>
       </header>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="ios-card bg-[#111827] p-4 flex flex-col items-center gap-1 text-center">
+        <div className="ios-card flex flex-col items-center gap-1 text-center">
           <Trophy size={24} className="text-[#4ADE80]" />
-          <span className="text-2xl font-black text-[#E5E7EB]">85%</span>
-          <span className="text-[9px] font-black uppercase text-[#6B7280] tracking-widest">Success</span>
+          <span className="text-2xl font-black text-[var(--text-main)]">85%</span>
+          <span className="text-[9px] font-black uppercase text-[var(--text-muted)] tracking-widest text-[#6B7280]">Success</span>
         </div>
-        <div className="ios-card bg-[#111827] p-4 flex flex-col items-center gap-1 text-center">
+        <div className="ios-card flex flex-col items-center gap-1 text-center">
           <Flame size={24} className="text-orange-400" />
-          <span className="text-2xl font-black text-[#E5E7EB]">12</span>
-          <span className="text-[9px] font-black uppercase text-[#6B7280] tracking-widest">Streak</span>
+          <span className="text-2xl font-black text-[var(--text-main)]">12</span>
+          <span className="text-[9px] font-black uppercase text-[var(--text-muted)] tracking-widest text-[#6B7280]">Streak</span>
         </div>
-        <div className="ios-card bg-[#111827] p-4 flex flex-col items-center gap-1 text-center">
+        <div className="ios-card flex flex-col items-center gap-1 text-center">
           <Target size={24} className="text-blue-400" />
-          <span className="text-2xl font-black text-[#E5E7EB]">28</span>
-          <span className="text-[9px] font-black uppercase text-[#6B7280] tracking-widest">Total</span>
+          <span className="text-2xl font-black text-[var(--text-main)]">28</span>
+          <span className="text-[9px] font-black uppercase text-[var(--text-muted)] tracking-widest text-[#6B7280]">Total</span>
         </div>
       </div>
 
       {/* Weekly Habit Table */}
-      <div className="ios-card bg-[#111827] p-4">
-        <h3 className="text-sm font-black uppercase tracking-widest text-[#6B7280] mb-4">This Week</h3>
+      <div className="ios-card p-4">
+        <h3 className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] mb-4">This Week</h3>
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-separate border-spacing-y-4">
              <thead>
@@ -76,11 +80,14 @@ const ReportsView = () => {
         </div>
       </div>
 
+      {/* Pricing Section */}
+      <PricingCard />
+
       {/* Insight Card */}
-      <div className="ios-card bg-[#111827] p-6 flex flex-col gap-3 text-center border border-[#16A34A]/20">
+      <div className="ios-card p-6 flex flex-col gap-3 text-center border border-[#16A34A]/20">
          <span className="text-4xl">🏆</span>
-         <h3 className="text-xl font-black text-[#E5E7EB]">Great Week!</h3>
-         <p className="text-sm text-[#6B7280] leading-relaxed">You completed 85% of your habits this week. Your best day was <span className="text-[#4ADE80] font-bold">Thursday</span>.</p>
+         <h3 className="text-xl font-black text-[var(--text-main)]">{lang === 'Hindi' ? 'बढ़िया सप्ताह!' : 'Great Week!'}</h3>
+         <p className="text-sm text-[var(--text-muted)] leading-relaxed">{lang === 'Hindi' ? 'आपने इस सप्ताह अपनी ८५% आदतें पूरी कीं।' : 'You completed 85% of your habits this week. Your best day was'} <span className="text-[#4ADE80] font-bold">{lang === 'Hindi' ? 'गुरुवार' : 'Thursday'}</span>.</p>
       </div>
     </div>
   );

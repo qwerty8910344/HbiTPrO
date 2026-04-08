@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Plus, Copy, UserPlus, Crown, Check, LogIn } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useSettings } from '../context/SettingsContext';
+import { t } from '../lib/i18n';
 
 const GroupsView = () => {
+  const { settings } = useSettings();
+  const lang = settings.language || 'English';
   const [groups, setGroups] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
@@ -106,18 +108,18 @@ const GroupsView = () => {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col items-center text-center">
-        <h1 className="text-[32px] font-black tracking-tight mt-4 text-[#E5E7EB]">Squads</h1>
-        <p className="text-[#6B7280] font-medium text-lg italic">Track together, grow together</p>
+        <h1 className="text-[32px] font-black tracking-tight mt-4 text-[var(--text-main)]">{t('groups', lang)}</h1>
+        <p className="text-[var(--text-muted)] font-medium text-lg italic">{t('hero_subtitle', lang)}</p>
       </header>
 
       {/* Action Buttons */}
       <div className="flex gap-3">
         <button
           onClick={() => { setShowCreate(!showCreate); setShowJoin(false); }}
-          className="flex-1 ios-card bg-[#111827] p-4 flex items-center justify-center gap-2 tap-effect border border-[#16A34A]/20"
+          className="flex-1 ios-card bg-[var(--card-dark)] p-4 flex items-center justify-center gap-2 tap-effect border border-[#16A34A]/20"
         >
           <Plus size={20} className="text-[#4ADE80]" />
-          <span className="font-black text-sm text-[#4ADE80] uppercase tracking-widest">Create</span>
+          <span className="font-black text-sm text-[#4ADE80] uppercase tracking-widest">{t('create_squad', lang)}</span>
         </button>
         <button
           onClick={() => { setShowJoin(!showJoin); setShowCreate(false); }}
@@ -167,9 +169,9 @@ const GroupsView = () => {
 
             <button
               onClick={handleCreateGroup}
-              className="w-full py-4 rounded-full bg-gradient-to-r from-[#16A34A] to-[#4ADE80] text-white font-black text-sm uppercase tracking-widest shadow-[0_10px_30px_rgba(22,163,74,0.3)] tap-effect"
+              className="w-full py-4 rounded-full bg-gradient-to-r from-[#16A34A] to-[#4ADE80] text-[#0B0F0C] font-black text-sm uppercase tracking-widest shadow-[0_10px_30px_rgba(22,163,74,0.3)] tap-effect"
             >
-              Create Squad
+              {t('create_squad', lang)}
             </button>
           </motion.div>
         )}

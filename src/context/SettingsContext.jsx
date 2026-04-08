@@ -8,7 +8,8 @@ export function SettingsProvider({ children }) {
     dark_mode: true,
     adhd_mode: false,
     face_id: false,
-    language: 'English'
+    language: 'English',
+    dob: null
   });
   const [loading, setLoading] = useState(true);
   
@@ -16,15 +17,18 @@ export function SettingsProvider({ children }) {
     fetchSettings();
   }, []);
 
-  useEffect(() => {
-    // Apply global classes instantly
-    const root = document.documentElement;
-    if (settings.dark_mode) root.classList.add('dark');
-    else root.classList.remove('dark');
-    
     if (settings.adhd_mode) root.classList.add('adhd-mode');
     else root.classList.remove('adhd-mode');
-  }, [settings.dark_mode, settings.adhd_mode]);
+
+    // RTL Support for Arabic
+    if (settings.language === 'Arabic') {
+      root.setAttribute('dir', 'rtl');
+      root.classList.add('rtl');
+    } else {
+      root.setAttribute('dir', 'ltr');
+      root.classList.remove('rtl');
+    }
+  }, [settings.dark_mode, settings.adhd_mode, settings.language]);
 
   const fetchSettings = async () => {
     try {
