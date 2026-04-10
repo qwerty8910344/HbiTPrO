@@ -9,13 +9,23 @@ export function SettingsProvider({ children }) {
     adhd_mode: false,
     face_id: false,
     language: 'English',
-    dob: null
+    dob: null,
+    avatar_url: null,
+    subscription_tier: 'free',
+    subscription_status: 'trialing',
+    created_at: null
   });
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     fetchSettings();
   }, []);
+
+  // Handle Theme and Layout Changes
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (settings.dark_mode) root.classList.add('dark');
+    else root.classList.remove('dark');
 
     if (settings.adhd_mode) root.classList.add('adhd-mode');
     else root.classList.remove('adhd-mode');
@@ -76,8 +86,26 @@ export function SettingsProvider({ children }) {
     }
   };
 
+  // Derived Trial Logic
+  const getTrialDaysLeft = () => {
+    if (!settings.created_at) return 0;
+    const signupDate = new Date(settings.created_at);
+    const trialEndDate = new Date(signupDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const today = new Date();
+    const diff = trialEndDate - today;
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  };
+
+  const isPremium = settings.subscription_tier !== 'free' || getTrialDaysLeft() > 0;
+
   return (
-    <SettingsContext.Provider value={{ settings, updateSetting, loading }}>
+    <SettingsContext.Provider value={{ 
+      settings, 
+      updateSetting, 
+      loading, 
+      isPremium, 
+      trialDaysLeft: getTrialDaysLeft() 
+    }}>
       {!loading && children}
     </SettingsContext.Provider>
   );

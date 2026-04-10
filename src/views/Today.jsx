@@ -12,7 +12,7 @@ import { t } from '../lib/i18n';
 import { getZodiacSign } from '../lib/ZodiacEngine';
 import HoroscopeView from './Horoscope';
 
-const TodayView = () => {
+const TodayView = ({ setView }) => {
   const [selectedDate, setSelectedDate] = useState(startOfToday());
   const [category, setCategory] = useState('All');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -187,9 +187,16 @@ const TodayView = () => {
             <Target size={22} className={isAdhdMode ? 'text-white' : 'text-[#6B7280]'} />
           </button>
 
-          <button className="relative tap-effect group">
-             <div className="w-12 h-12 rounded-full border-4 border-[#111827] shadow-lg overflow-hidden group-hover:scale-110 transition-transform">
-               <img src="https://i.pravatar.cc/150?u=a2" alt="User" className="w-full h-full object-cover" />
+          <button 
+            onClick={() => setView?.('settings')}
+            className="relative tap-effect group"
+          >
+             <div className="w-12 h-12 rounded-full border-4 border-[#111827] shadow-lg overflow-hidden group-hover:scale-110 transition-transform bg-[#111827] flex items-center justify-center">
+               {settings.avatar_url ? (
+                 <img src={settings.avatar_url} alt="User" className="w-full h-full object-cover" />
+               ) : (
+                 <img src="https://i.pravatar.cc/150?u=a2" alt="User" className="w-full h-full object-cover opacity-50" />
+               )}
              </div>
              <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#4ADE80] border-2 border-[#0B0F0C] rounded-full flex items-center justify-center">
                 <Sun size={12} fill="white" className="text-white" />

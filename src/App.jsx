@@ -35,14 +35,14 @@ function AppContent() {
 
   const renderView = () => {
     switch (view) {
-      case 'today': return <TodayView />;
+      case 'today': return <TodayView setView={setView} />;
       case 'reports': return <ReportsView />;
       case 'stats': return <TrackingView />;
       case 'groups': return <GroupsView />;
       case 'focus': return <FocusView />;
       case 'motivation': return <MotivationView />;
       case 'settings': return <SettingsView />;
-      default: return <TodayView />;
+      default: return <TodayView setView={setView} />;
     }
   };
 
